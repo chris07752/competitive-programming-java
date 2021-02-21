@@ -9,12 +9,12 @@ import java.io.*;
 import java.util.*;
 
 public class holstein {
-    public static int[][] feeds;
-    public static int V, G;
-    public static int[] req;
-    public static boolean[] bestFeeds;
+    public static int[][] input;
+    public static int V, E;
+    public static int[] pull;
+    public static boolean[] answer;
 
-    public static int maxnoOfFeeds, maxTotalFeeds;
+    public static int max, maxTotal;
 
     public static void main(String[] args) throws IOException {
         BufferedReader f = new BufferedReader(new FileReader("holstein.in"));
@@ -24,38 +24,38 @@ public class holstein {
 
         StringTokenizer st = new StringTokenizer(f.readLine());
 
-        req = new int[V];
+        pull = new int[V];
 
         for (int i = 0; i < V; i++) {
-            req[i] = Integer.parseInt(st.nextToken());
+            pull[i] = Integer.parseInt(st.nextToken());
         }
 
-        G = Integer.parseInt(f.readLine());
-        feeds = new int[G][V];
+        E = Integer.parseInt(f.readLine());
+        input = new int[E][V];
 
-        for (int i = 0; i < G; i++) {
+        for (int i = 0; i < E; i++) {
             st = new StringTokenizer(f.readLine());
             for (int j = 0; j < V; j++) {
-                feeds[i][j] = Integer.parseInt(st.nextToken());
+                input[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        bestFeeds = new boolean[G];
-        for (int i = 0; i < G; i++) {
-            bestFeeds[i] = true;
+        answer = new boolean[E];
+        for (int i = 0; i < E; i++) {
+            answer[i] = true;
         }
-        maxnoOfFeeds = G;
-        maxTotalFeeds = 999;
+        max = E;
+        maxTotal = 999;
 
-        recurse(new int[V], new boolean[G], 0);
+        solve(new int[V], new boolean[E], 0);
 
-        out.print(maxnoOfFeeds + " ");
+        out.print(max + " ");
 
         int temp = 0;
-        for (int i = 0; i < G; i++) {
-            if (bestFeeds[i]) {
+        for (int i = 0; i < E; i++) {
+            if (answer[i]) {
                 out.print(i + 1);
                 temp++;
-                if (temp < maxnoOfFeeds) {
+                if (temp < max) {
                     out.print(" ");
                 }
             }
@@ -65,41 +65,41 @@ public class holstein {
         out.close();
     }
 
-    public static void recurse(int[] total, boolean[] allIndex, int index) {
-        if (index >= G) {
+    public static void solve(int[] total, boolean[] allIndex, int index) {
+        if (index >= E) {
             for (int i = 0; i < V; i++) {
-                if (total[i] < req[i]) {
+                if (total[i] < pull[i]) {
                     return;
                 }
             }
-            int noOfFeeds = 0;
-            int totalFeeds = 0;
+            int numInput = 0;
+            int totalInput = 0;
 
-            for (int i = 0; i < G; i++) {
+            for (int i = 0; i < E; i++) {
                 if (allIndex[i]) {
-                    noOfFeeds++;
-                    totalFeeds += i;
+                    numInput++;
+                    totalInput += i;
                 }
             }
 
-            if (noOfFeeds < maxnoOfFeeds || noOfFeeds == maxnoOfFeeds && totalFeeds <= maxTotalFeeds) {
-                for (int i = 0; i < G; i++) {
-                    bestFeeds[i] = allIndex[i];
+            if (numInput < max || numInput == max && totalInput <= maxTotal) {
+                for (int i = 0; i < E; i++) {
+                    answer[i] = allIndex[i];
                 }
-                maxnoOfFeeds = noOfFeeds;
-                maxTotalFeeds = totalFeeds;
+                max = numInput;
+                maxTotal = totalInput;
             }
         } else {
-            recurse(total, allIndex, index + 1);
+            solve(total, allIndex, index + 1);
 
             for (int i = 0; i < V; i++) {
-                total[i] += feeds[index][i];
+                total[i] += input[index][i];
             }
             allIndex[index] = true;
-            recurse(total, allIndex, index + 1);
+            solve(total, allIndex, index + 1);
 
             for (int i = 0; i < V; i++) {
-                total[i] -= feeds[index][i];
+                total[i] -= input[index][i];
             }
             allIndex[index] = false;
         }

@@ -1,3 +1,3 @@
-# competitive-programming
+# programming
 
-Collection of my coding files in preparation for USACO.
+Collection of my coding files and problem-solving.
